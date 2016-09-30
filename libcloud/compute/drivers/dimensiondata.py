@@ -130,189 +130,6 @@ class DimensionDataNodeDriver(NodeDriver):
         kwargs['region'] = self.selected_region
         return kwargs
 
-    # def create_node_mcp1(self, name, image, auth, ex_description,
-    #                      ex_network=None, ex_network_domain=None,
-    #                      ex_vlan=None, ex_primary_ipv4=None,
-    #                      ex_memory_gb=None,
-    #                      ex_cpu_specification=None,
-    #                      ex_is_started=True, ex_additional_nics_vlan=None,
-    #                      ex_additional_nics_ipv4=None,
-    #                      ex_primary_dns=None,
-    #                      ex_secondary_dns=None, **kwargs):
-    #     """
-    #     Create a new DimensionData node
-    #
-    #     :keyword    name:   String with a name for this new node (required)
-    #     :type       name:   ``str``
-    #
-    #     :keyword    image:  OS Image to boot on node. (required)
-    #     :type       image:  :class:`NodeImage` or ``str``
-    #
-    #     :keyword    auth:   Initial authentication information for the
-    #                         node. (If this is a customer LINUX
-    #                         image auth will be ignored)
-    #     :type       auth:   :class:`NodeAuthPassword` or ``str`` or ``None``
-    #
-    #     :keyword    ex_description:  description for this node (required)
-    #     :type       ex_description:  ``str``
-    #
-    #     :keyword    ex_network:  Network to create the node within
-    #                              (required unless using ex_network_domain
-    #                              or ex_primary_ipv4)
-    #
-    #     :type       ex_network: :class:`DimensionDataNetwork` or ``str``
-    #
-    #     :keyword    ex_network_domain:  Network Domain to create the node
-    #                                     (required unless using network
-    #                                     or ex_primary_ipv4)
-    #     :type       ex_network_domain: :class:`DimensionDataNetworkDomain`
-    #                                     or ``str``
-    #
-    #     :keyword    ex_primary_ipv4: Primary nics IPv4 Address
-    #                                  MCP1: (required unless ex_network)
-    #                                  MCP2: (required unless ex_vlan)
-    #     :type       ex_primary_ipv4: ``str``
-    #
-    #     :keyword    ex_vlan:  VLAN to create the node within
-    #                           (required unless using network)
-    #     :type       ex_vlan: :class:`DimensionDataVlan` or ``str``
-    #
-    #     :keyword    ex_memory_gb:  The amount of memory in GB for the server
-    #     :type       ex_memory_gb: ``int``
-    #
-    #     :keyword    ex_cpu_specification: The spec of CPU to deploy (
-    # optional)
-    #     :type       ex_cpu_specification:
-    #         :class:`DimensionDataServerCpuSpecification`
-    #
-    #     :keyword    ex_is_started:  Start server after creation? default
-    #                                true (required)
-    #     :type       ex_is_started:  ``bool``
-    #
-    #     :keyword    ex_additional_nics_vlan: (MCP2 Only) List of additional
-    #                                           nics to add by vlan
-    #     :type       ex_additional_nics_vlan: ``list`` of
-    #         :class:`DimensionDataVlan` or ``list`` of ``str``
-    #
-    #     :keyword    ex_additional_nics_ipv4: (MCP2 Only) List of additional
-    #                                           nics to add by ipv4 address
-    #     :type       ex_additional_nics_ipv4: ``list`` of ``str``
-    #
-    #     :keyword    ex_primary_dns: The node's primary DNS
-    #
-    #     :type       ex_primary_dns: ``str``
-    #
-    #     :keyword    ex_secondary_dns: The node's secondary DNS
-    #
-    #     :type       ex_secondary_dns: ``str``
-    #
-    #     :return: The newly created :class:`Node`.
-    #     :rtype: :class:`Node`
-    #     """
-    #     password = None
-    #     image_needs_auth = self._image_needs_auth(image)
-    #     if image_needs_auth:
-    #         if isinstance(auth, basestring):
-    #             auth_obj = NodeAuthPassword(password=auth)
-    #             password = auth
-    #         else:
-    #             auth_obj = self._get_and_check_auth(auth)
-    #             password = auth_obj.password
-    #
-    #     if (ex_network_domain is None and ex_network is None and
-    #                 ex_primary_ipv4 is None):
-    #         raise ValueError("One of ex_network_domain, ex_network, "
-    #                          "or ex_ipv6_primary must be specified")
-    #
-    #     server_elm = ET.Element('deployServer', {'xmlns': TYPES_URN})
-    #     ET.SubElement(server_elm, "name").text = name
-    #     ET.SubElement(server_elm, "description").text = ex_description
-    #     image_id = self._image_to_image_id(image)
-    #     ET.SubElement(server_elm, "imageId").text = image_id
-    #     ET.SubElement(server_elm, "start").text = str(ex_is_started).lower()
-    #     if password is not None:
-    #         ET.SubElement(server_elm, "administratorPassword").text =
-    # password
-    #
-    #     if ex_cpu_specification is not None:
-    #         cpu = ET.SubElement(server_elm, "cpu")
-    #         cpu.set('speed', ex_cpu_specification.performance)
-    #         cpu.set('count', str(ex_cpu_specification.cpu_count))
-    #         cpu.set('coresPerSocket',
-    #                 str(ex_cpu_specification.cores_per_socket))
-    #
-    #     if ex_memory_gb is not None:
-    #         ET.SubElement(server_elm, "memoryGb").text = str(ex_memory_gb)
-    #
-    #     if ex_network is not None:
-    #         network_elm = ET.SubElement(server_elm, "network")
-    #         network_id = self._network_to_network_id(ex_network)
-    #         ET.SubElement(network_elm, "networkId").text = network_id
-    #     elif ex_network_domain is None and ex_primary_ipv4 is not None:
-    #         network_elm = ET.SubElement(server_elm, "network")
-    #         ET.SubElement(network_elm, "privateIpv4").text = ex_primary_ipv4
-    #     elif ex_network_domain is not None:
-    #         net_domain_id = self._network_domain_to_network_domain_id(
-    #             ex_network_domain)
-    #         network_inf_elm = ET.SubElement(
-    #             server_elm, "networkInfo",
-    #             {'networkDomainId': net_domain_id}
-    #         )
-    #
-    #         if ex_vlan is not None:
-    #             vlan_id = self._vlan_to_vlan_id(ex_vlan)
-    #             pri_nic = ET.SubElement(network_inf_elm, "primaryNic")
-    #             ET.SubElement(pri_nic, "vlanId").text = vlan_id
-    #         elif ex_primary_ipv4 is not None:
-    #             pri_nic = ET.SubElement(network_inf_elm, "primaryNic")
-    #             ET.SubElement(pri_nic, "privateIpv4").text = ex_primary_ipv4
-    #         else:
-    #             raise ValueError("One of ex_vlan or ex_primary_ipv4 "
-    #                              "must be specified")
-    #
-    #         if isinstance(ex_additional_nics_ipv4, (list, tuple)):
-    #             for ipv4_nic in ex_additional_nics_ipv4:
-    #                 add_nic = ET.SubElement(network_inf_elm, "additionalNic")
-    #                 ET.SubElement(add_nic, "privateIpv4").text = ipv4_nic
-    #         elif ex_additional_nics_ipv4 is not None:
-    #             raise TypeError("ex_additional_nics_ipv4 must "
-    #                             "be None or a tuple/list")
-    #
-    #         if isinstance(ex_additional_nics_vlan, (list, tuple)):
-    #             for vlan_nic in ex_additional_nics_vlan:
-    #                 add_nic = ET.SubElement(network_inf_elm, "additionalNic")
-    #                 ET.SubElement(add_nic, "vlanId").text = vlan_nic
-    #         elif ex_additional_nics_vlan is not None:
-    #             raise TypeError("ex_additional_nics_vlan"
-    #                             "must be None or tuple/list")
-    #
-    #     if ex_primary_dns:
-    #         dns_elm = ET.SubElement(server_elm, "primaryDns")
-    #         dns_elm.text = ex_primary_dns
-    #
-    #     if ex_secondary_dns:
-    #         dns_elm = ET.SubElement(server_elm, "secondaryDns")
-    #         dns_elm.text = ex_secondary_dns
-    #
-    #     response = self.connection.request_with_orgId_api_2(
-    #         'server/deployServer',
-    #         method='POST',
-    #         data=ET.tostring(server_elm)).object
-    #
-    #     node_id = None
-    #     for info in findall(response, 'info', TYPES_URN):
-    #         if info.get('name') == 'serverId':
-    #             node_id = info.get('value')
-    #
-    #     node = self.ex_get_node_by_id(node_id)
-    #
-    #     if image_needs_auth:
-    #         if getattr(auth_obj, "generated", False):
-    #             node.extra['password'] = auth_obj.password
-    #
-    #     return node
-    #
-    #
     def create_node_mcp1(self, name, image, auth, ex_description,
                          ex_network=None,
                          ex_vlan=None, ex_primary_ipv4=None,
@@ -335,7 +152,7 @@ class DimensionDataNodeDriver(NodeDriver):
                                 node. (If this is a customer LINUX
                                 image auth will be ignored)
             :type       auth:   :class:`NodeAuthPassword` or ``str`` or
-            ``None``
+                                ``None``
 
             :keyword    ex_description:  description for this node (required)
             :type       ex_description:  ``str``
@@ -356,22 +173,23 @@ class DimensionDataNodeDriver(NodeDriver):
             :type       ex_vlan: :class:`DimensionDataVlan` or ``str``
 
             :keyword    ex_memory_gb:  The amount of memory in GB for the
-            server
+                                       server
             :type       ex_memory_gb: ``int``
 
             :keyword    ex_cpu_specification: The spec of CPU to deploy (
-            optional)
+                                              optional)
             :type       ex_cpu_specification:
-                :class:`DimensionDataServerCpuSpecification`
+                            :class:`DimensionDataServerCpuSpecification`
 
             :keyword    ex_is_started:  Start server after creation? default
-                                       true (required)
+                                        true (required)
             :type       ex_is_started:  ``bool``
 
             :keyword    ex_additional_nics_vlan: (MCP2 Only) List of additional
                                                   nics to add by vlan
             :type       ex_additional_nics_vlan: ``list`` of
-                :class:`DimensionDataVlan` or ``list`` of ``str``
+                                                 :class:`DimensionDataVlan`
+                                                 or ``list`` of ``str``
 
             :keyword    ex_additional_nics_ipv4: (MCP2 Only) List of additional
                                                   nics to add by ipv4 address
@@ -470,12 +288,14 @@ class DimensionDataNodeDriver(NodeDriver):
                     **kwargs
                     ):
         """
-        Create a new DimensionData node. For MCP2 only.
+        Create a new DimensionData node in MCP2. However, it is still
+        backward compatible for MCP1 for a limited time. Please consider
+        using MCP2 datacenter as MCP1 will phase out soon.
 
-        :keyword    name:   String with a name for this new node (required)
+        :keyword    name:   (required) String with a name for this new node
         :type       name:   ``str``
 
-        :keyword    image:  OS Image to boot on node. (required)
+        :keyword    image:  (required) OS Image to boot on node.
         :type       image:  :class:`NodeImage` or ``str``
 
         :keyword    auth:   Initial authentication information for the
@@ -483,98 +303,87 @@ class DimensionDataNodeDriver(NodeDriver):
                             image auth will be ignored)
         :type       auth:   :class:`NodeAuthPassword` or ``str`` or ``None``
 
-        :keyword    ex_description:  description for this node (optional)
+        :keyword    ex_description:  (optional) description for this node
         :type       ex_description:  ``str``
 
 
-        :keyword    ex_network_domain:  Network Domain to create the node
-                                        (required)
+        :keyword    ex_network_domain:  (required) Network Domain or Network
+                                        Domain ID to create the node
         :type       ex_network_domain: :class:`DimensionDataNetworkDomain`
                                         or ``str``
 
-        :keyword    ex_primary_nic_private_ipv4:  ex_primary_nic_vlan:
-        Provide either a
-                    VLAN on the same Network Domain as networkDomain
-                    OR privateIpv4 (required)
-
+        :keyword    ex_primary_nic_private_ipv4:  Provide private IPv4. Ignore
+                                                  if ex_primary_nic_vlan is
+                                                  provided. Use one or the
+                                                  other. Not both.
         :type       ex_primary_nic_private_ipv4: :``str``
 
-        :keyword    ex_primary_nic_vlan:  Provide either a
-                    VLAN on the same Network Domain as networkDomain
-                    OR privateIpv4 (required)
-
+        :keyword    ex_primary_nic_vlan:  Provide VLAN for the node if
+                                          ex_primary_nic_private_ipv4 NOT
+                                          provided. One or the other. Not both.
         :type       ex_primary_nic_vlan: :class: DimensionDataVlan or ``str``
 
-        :keyword    ex_primary_nic_network_adapter:  if not supplied the
-        default value
-                    for the Operating System will be used, for example
-                    "E1000".(Optional)
-
+        :keyword    ex_primary_nic_network_adapter: (Optional) Default value
+                                                    for the Operating System
+                                                    will be used if leave
+                                                    empty. Example: "E1000".
         :type       ex_primary_nic_network_adapter: :``str``
 
-        :keyword    ex_additional_nics: List of additional nic:
-        :class:'DimensionDataNic' (optional)
+        :keyword    ex_additional_nics: (optional) List
+                                        :class:'DimensionDataNic' or None
+        :type       ex_additional_nics: ``list`` of :class:'DimensionDataNic'
+                                        or ``str``
 
-        :type       ex_additional_nics: List of :class:'DimensionDataNic'
-        or``str``
-
-
-        :keyword    ex_additional_nics: List of additional nic:
-        :class:'DimensionDataNic' (optional)
-
-        :type       ex_additional_nics: List of :class:'DimensionDataNic'
-        or``str``
-
-        :keyword    ex_memory_gb:  The amount of memory in GB for the server
+        :keyword    ex_memory_gb:  (optional) The amount of memory in GB for
+                                   the server Can be used to override the
+                                   memory value inherited from the source
+                                   Server Image.
         :type       ex_memory_gb: ``int``
 
-        :keyword    ex_cpu_specification: The spec of CPU to deploy (optional)
+        :keyword    ex_cpu_specification: (optional) The spec of CPU to deploy
         :type       ex_cpu_specification:
-            :class:`DimensionDataServerCpuSpecification`
+                        :class:`DimensionDataServerCpuSpecification`
 
-        :keyword    ex_is_started:  Start server after creation? default
-                                   true (required)
+        :keyword    ex_is_started: (required) Start server after creation.
+                                   Default is set to true.
         :type       ex_is_started:  ``bool``
 
-        :keyword    ex_primary_dns: The node's primary DNS
-
+        :keyword    ex_primary_dns: (Optional) The node's primary DNS
         :type       ex_primary_dns: ``str``
 
-        :keyword    ex_secondary_dns: The node's secondary DNS
-
+        :keyword    ex_secondary_dns: (Optional) The node's secondary DNS
         :type       ex_secondary_dns: ``str``
 
-        :keyword    ex_ipv4_gateway: Optional IPv4 address in dot-decimal
-        notation, which will
-            be used as the Primary NIC gateway instead of the default
-            gateway assigned by the system.
-            If ipv4Gateway is provided it does not have to be on the VLAN of
-            the Primary NIC but MUST
-            be reachable or the Guest OS will not be configured correctly.
-
+        :keyword    ex_ipv4_gateway: (Optional) IPv4 address in dot-decimal
+                                     notation, which will be used as the
+                                     Primary NIC gateway instead of the default
+                                     gateway assigned by the system. If
+                                     ipv4Gateway is provided it does not have
+                                     to be on the VLAN of the Primary NIC
+                                     but MUST be reachable or the Guest OS
+                                     will not be configured correctly.
         :type       ex_ipv4_gateway: ``str``
 
-        :keyword    ex_disks: Dimensiondata disks. Optional disk elements
-        can be used to define the disk speed that each disk on the Server;
-        inherited from the source Server Image will be deployed to. It is
-        not necessary to include a diskelement for every disk; only those
-        that you wish to set a disk speed value for. Note that scsiId 7
-        cannot be used.Up to 13 disks can be present in addition to the
-        required OS disk on SCSI ID 0. Refer to
-        https://docs.mcp-services.net/x/UwIu for disk speeds specification
+        :keyword    ex_disks: (optional) Dimensiondata disks. Optional disk
+                            elements can be used to define the disk speed
+                            that each disk on the Server; inherited from the
+                            source Server Image will be deployed to. It is
+                            not necessary to include a diskelement for every
+                            disk; only those that you wish to set a disk
+                            speed value for. Note that scsiId 7 cannot be
+                            used.Up to 13 disks can be present in addition to
+                            the required OS disk on SCSI ID 0. Refer to
+                            https://docs.mcp-services.net/x/UwIu for disk
 
         :type       ex_disks: List or tuple of :class:'DimensionDataServerDisk`
 
-        :keyword    [Optional] ex_microsoft_time_zone: String. For use with
-        Microsoft Windows source Server Images (imageId)
-        only. For the exact value to use please refer to the
-        table of time zone indexes in the following
-        Microsoft Technet documentation. If none is supplied,
-        the default time zone for the data center geographic region will
-        be used.
-
-        :type       ex_microsoft_time_zone: :class:'DimensionDataServerDisk`
-        or `str``
+        :keyword    ex_microsoft_time_zone: (optional) For use with
+                    Microsoft Windows source Server Images only. For the exact
+                    value to use please refer to the table of time zone
+                    indexes in the following Microsoft Technet
+                    documentation. If none is supplied, the default time
+                    zone for the data center geographic region will be used.
+        :type       ex_microsoft_time_zone: `str``
 
 
         :return: The newly created :class:`Node`.
@@ -1961,18 +1770,18 @@ class DimensionDataNodeDriver(NodeDriver):
         """
         Edit a firewall rule
 
-        :param rule: The rule in which to create
+        :param rule: (required) The rule in which to create
         :type  rule: :class:`DimensionDataFirewallRule`
 
-        :param position: The position in which to create the rule
-                         There are two types of positions
+        :param position: (required) There are two types of positions
                          with position_relative_to_rule arg and without it
                          With: 'BEFORE' or 'AFTER'
                          Without: 'FIRST' or 'LAST'
         :type  position: ``str``
 
-        :param relative_rule_for_position: The rule or rule name in
-                                          which to decide positioning by
+        :param relative_rule_for_position: (optional) The rule or rule name in
+                                           which to decide the relative rule
+                                           for positioning.
         :type  relative_rule_for_position:
             :class:`DimensionDataFirewallRule` or ``str``
 
@@ -2992,12 +2801,13 @@ class DimensionDataNodeDriver(NodeDriver):
         """
         Get IP Address List by name in network domain specified
 
-        :param  ex_network_domain: The network domain or network domain ID
+        :param  ex_network_domain: (required) The network domain or network
+                                   domain ID in which ipaddresslist resides.
         :type   ex_network_domain: :class:`DimensionDataNetworkDomain` or 'str'
 
-        :param    ex_ip_address_list_name:  Get 'IP Address List' by name
-                                        (required)
-        :type      ex_ip_address_list_name: :``str``
+        :param    ex_ip_address_list_name: (required) Get 'IP Address List' by
+                                            name
+        :type     ex_ip_address_list_name: :``str``
 
         :return: a list of DimensionDataIpAddressList objects
         :rtype: ``list`` of :class:`DimensionDataIpAddressList`
@@ -3027,14 +2837,18 @@ class DimensionDataNodeDriver(NodeDriver):
         :type      ip_version: :``str``
 
         :param    ip_address_collection:  List of IP Address. At least one
-        ipAddress element or one childIpAddressListId element must be provided.
+                                          ipAddress element or one
+                                          childIpAddressListId element must
+                                          be provided.
         :type      ip_address_collection: :``str``
 
         :param    child_ip_address_list:  Child IP Address List or id to be
-        included in this IP Address List. At least one ipAddress element or
-        one childIpAddressListId element must be provided.
-        :type      child_ip_address_list:
-        :class:'DimensionDataChildIpAddressList` or `str``
+                                          included in this IP Address List.
+                                          At least one ipAddress or
+                                          one childIpAddressListId
+                                          must be provided.
+        :type     child_ip_address_list:
+                        :class:'DimensionDataChildIpAddressList` or `str``
 
         :return: a list of DimensionDataIpAddressList objects
         :rtype: ``list`` of :class:`DimensionDataIpAddressList`
@@ -3102,8 +2916,8 @@ class DimensionDataNodeDriver(NodeDriver):
         """
         Edit IP Address List. IP Address list.
 
-        :param    ex_ip_address_list:  IP Address List object or IP Address
-        List ID (required)
+        :param    ex_ip_address_list:  (required) IpAddressList object or
+                                       IpAddressList ID
         :type     ex_ip_address_list: :class:'DimensionDataIpAddressList'
                     or ``str``
 
@@ -3112,12 +2926,13 @@ class DimensionDataNodeDriver(NodeDriver):
 
         :param    ip_address_collection:  List of IP Address
         :type     ip_address_collection: ''list'' of
-        :class:'DimensionDataIpAddressList'
+                                         :class:'DimensionDataIpAddressList'
 
         :param   child_ip_address_lists:  Child IP Address List or id to be
-                    included in this IP Address List
-        :type    child_ip_address_lists
-        :class:'DimensionDataChildIpAddressList' or ``str``
+                                          included in this IP Address List
+        :type    child_ip_address_lists:  ``list`` of
+                                    :class:'DimensionDataChildIpAddressList'
+                                    or ``str``
 
         :return: a list of DimensionDataIpAddressList objects
         :rtype: ``list`` of :class:`DimensionDataIpAddressList`
@@ -3233,23 +3048,24 @@ class DimensionDataNodeDriver(NodeDriver):
         """
         Create Port List.
 
-        :param    ex_network_domain:  Create Port List in this domain
-                                        (required)
+        :param    ex_network_domain:  (required) The network domain in
+                                       which to create PortList. Provide
+                                       networkdomain object or its id.
         :type      ex_network_domain: :``str``
 
         :param    name:  Port List Name
-        :type      name: :``str``
+        :type     name: :``str``
 
         :param    description:  IP Address List Description
-        :type      description: :``str``
+        :type     description: :``str``
 
         :param    port_collection:  List of Port Address
-        :type      port_collection: :``str``
+        :type     port_collection: :``str``
 
         :param    child_port_list_lists:  Child Port List to be included in
-        this Port List
-        :type      child_port_list_lists: :``str`` or
-        ''list of :class:'DimensionDataChildPortList'
+                                          this Port List
+        :type     child_port_list_lists: :``str`` or ''list of
+                                         :class:'DimensionDataChildPortList'
 
         :return: result of operation
         :rtype: ``bool``
@@ -3311,9 +3127,10 @@ class DimensionDataNodeDriver(NodeDriver):
         :type      port_collection: :``str``
 
         :param    child_port_list_lists:  Child Port List to be included in
-        this IP Address List
+                                          this IP Address List
         :type      child_port_list_lists: :``list`` of
-        :class'DimensionDataChildPortList' or ''str''
+                                          :class'DimensionDataChildPortList'
+                                          or ''str''
 
         :return: a list of DimensionDataPortList objects
         :rtype: ``list`` of :class:`DimensionDataPortList`
