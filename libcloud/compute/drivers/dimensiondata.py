@@ -460,8 +460,6 @@ class DimensionDataNodeDriver(NodeDriver):
                     auth_obj = self._get_and_check_auth(auth)
                     password = auth_obj.password
 
-
-
             server_elm = ET.Element('deployServer', {'xmlns': TYPES_URN})
             ET.SubElement(server_elm, "name").text = name
             ET.SubElement(server_elm, "description").text = ex_description
@@ -484,14 +482,14 @@ class DimensionDataNodeDriver(NodeDriver):
                 ET.SubElement(server_elm, "memoryGb").text = str(ex_memory_gb)
 
             if (ex_primary_nic_private_ipv4 is None and
-                        ex_primary_nic_vlan is None):
+                    ex_primary_nic_vlan is None):
                 raise ValueError("Missing argument. Either "
                                  "ex_primary_nic_private_ipv4 or "
                                  "ex_primary_nic_vlan "
                                  "must be specified.")
 
             if (ex_primary_nic_private_ipv4 is not None and
-                        ex_primary_nic_vlan is not None):
+                    ex_primary_nic_vlan is not None):
                 raise ValueError("Either ex_primary_nic_private_ipv4 or "
                                  "ex_primary_nic_vlan "
                                  "be specified. Not both.")
@@ -524,13 +522,13 @@ class DimensionDataNodeDriver(NodeDriver):
                                                    'additionalNic')
 
                     if (nic.private_ip_v4 is None and
-                                nic.vlan is None):
+                            nic.vlan is None):
                         raise ValueError("Either a vlan or private_ip_v4 "
                                          "must be specified for each "
                                          "additional nic.")
 
                     if (nic.private_ip_v4 is not None and
-                                nic.vlan is not None):
+                            nic.vlan is not None):
                         raise ValueError("Either a vlan or private_ip_v4 "
                                          "must be specified for each "
                                          "additional nic. Not both.")
@@ -756,11 +754,8 @@ class DimensionDataNodeDriver(NodeDriver):
 
         return self._to_locations(
             self.connection
-                .request_with_orgId_api_2(
-                'infrastructure/datacenter',
-                params=params
-            ).object
-        )
+                .request_with_orgId_api_2('infrastructure/datacenter',
+                                          params=params).object)
 
     def list_networks(self, location=None):
         """
@@ -2854,7 +2849,7 @@ class DimensionDataNodeDriver(NodeDriver):
         :rtype: ``list`` of :class:`DimensionDataIpAddressList`
         """
         if (ip_address_collection is None and
-                    child_ip_address_list is None):
+                child_ip_address_list is None):
             raise ValueError("At least one ipAddress element or one "
                              "childIpAddressListId element must be "
                              "provided.")
@@ -2999,7 +2994,7 @@ class DimensionDataNodeDriver(NodeDriver):
         delete_ip_address_list = \
             ET.Element('deleteIpAddressList', {'xmlns': TYPES_URN, 'id': self
                        ._ip_address_list_to_ip_address_list_id(
-                ex_ip_address_list)})
+                           ex_ip_address_list)})
 
         response = self.connection.request_with_orgId_api_2(
             'network/deleteIpAddressList',
@@ -3020,8 +3015,7 @@ class DimensionDataNodeDriver(NodeDriver):
         :rtype: ``list`` of :class:`DimensionDataPortList`
         """
         params = {'networkDomainId':
-            self._network_domain_to_network_domain_id(
-                ex_network_domain)}
+                  self._network_domain_to_network_domain_id(ex_network_domain)}
         response = self.connection.request_with_orgId_api_2(
             'network/portList', params=params).object
         return self._to_port_lists(response)
@@ -3569,8 +3563,8 @@ class DimensionDataNodeDriver(NodeDriver):
             'networkId': findtext(element, 'networkId', TYPES_URN),
             'networkDomainId':
                 element
-                    .find(fixxpath('networkInfo', TYPES_URN))
-                    .get('networkDomainId')
+                .find(fixxpath('networkInfo', TYPES_URN))
+                .get('networkDomainId')
                 if has_network_info else None,
             'datacenterId': element.get('datacenterId'),
             'deployedTime': findtext(element, 'createTime', TYPES_URN),

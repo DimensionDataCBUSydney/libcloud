@@ -47,7 +47,7 @@ from libcloud.utils.xml import fixxpath, findtext, findall
 class DimensionDataTests(unittest.TestCase, TestCaseMixin):
     def setUp(self):
         DimensionData.connectionCls.conn_classes = (
-        None, DimensionDataMockHttp)
+            None, DimensionDataMockHttp)
         DimensionData.connectionCls.rawResponseCls = \
             DimensionDataMockRawResponse
         DimensionDataMockHttp.type = None
@@ -122,7 +122,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
         DimensionDataMockHttp.type = 'PAGESIZE50'
         node_list_generator = \
             self.driver.connection.paginated_request_with_orgId_api_2(
-            'server/server', page_size=50)
+                'server/server', page_size=50)
         self.assertTrue(isinstance(node_list_generator, GeneratorType))
 
     # We're making sure here the filters make it to the URL
@@ -334,7 +334,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
         location = self.driver.ex_get_location_by_id('NA9')
         image = self.driver.list_images(location=location)[0]
         network_domain = \
-        self.driver.ex_list_network_domains(location=location)[0]
+            self.driver.ex_list_network_domains(location=location)[0]
         vlan = self.driver.ex_list_vlans(location=location)[0]
         cpu = DimensionDataServerCpuSpecification(
             cpu_count=4,
@@ -356,7 +356,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
         location = self.driver.ex_get_location_by_id('NA9')
         image = self.driver.list_images(location=location)[0]
         network_domain = \
-        self.driver.ex_list_network_domains(location=location)[0].id
+            self.driver.ex_list_network_domains(location=location)[0].id
         vlan = self.driver.ex_list_vlans(location=location)[0].id
         cpu = DimensionDataServerCpuSpecification(
             cpu_count=4,
@@ -705,6 +705,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
                                     ex_additional_nics=additional_nics,
                                     ex_is_started=False
                                     )
+
     def test_create_node_additional_nics_invalid_input_fail(self):
         root_pw = NodeAuthPassword('pass123')
         image = self.driver.list_images()[0]
@@ -1046,7 +1047,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             '8cdfd607-f429-4df6-9352-162cfc0891be')
         rules = self.driver.ex_list_firewall_rules(net)
         specific_source_ip_rule = \
-        list(filter(lambda x: x.name == 'SpecificSourceIP',
+            list(filter(lambda x: x.name == 'SpecificSourceIP',
                     rules))[0]
         specific_source_ip_rule.source.any_ip = False
         specific_source_ip_rule.source.ip_address = '10.0.0.1'
@@ -1061,14 +1062,13 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             '8cdfd607-f429-4df6-9352-162cfc0891be')
         rules = self.driver.ex_list_firewall_rules(net)
         specific_source_ip_rule = \
-        list(filter(lambda x: x.name == 'SpecificSourceIP',
+            list(filter(lambda x: x.name == 'SpecificSourceIP',
                     rules))[0]
         specific_source_ip_rule.source.any_ip = True
         rule = self.driver.ex_create_firewall_rule(net,
                                                    specific_source_ip_rule,
                                                    'FIRST')
         self.assertEqual(rule.id, 'd0a20f59-77b9-4f28-a63b-e58496b73a6c')
-
 
     def test_ex_create_firewall_rule_ip_prefix_size(self):
         net = self.driver.ex_get_network_domain(
@@ -1253,7 +1253,6 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             rule=rule, position='BEFORE',
             relative_rule_for_position=placement_rule.name)
         self.assertTrue(result)
-
 
     def test_ex_edit_firewall_rule_source_portlist(self):
         net = self.driver.ex_get_network_domain(
@@ -1464,7 +1463,8 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
     def test_ex_delete_anti_affinity_rule(self):
         net_domain = self.driver.ex_list_network_domains()[0]
         rule = \
-        self.driver.ex_list_anti_affinity_rules(network_domain=net_domain)[0]
+            self.driver.ex_list_anti_affinity_rules(
+                network_domain=net_domain)[0]
         success = self.driver.ex_delete_anti_affinity_rule(rule)
         self.assertTrue(success)
 
@@ -1989,7 +1989,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             id="333174a2-ae74-4658-9e56-50fc90e086cf", name='test port 1')
         child_port_2 = DimensionDataChildPortList(
             id="311174a2-ae74-4658-9e56-50fc90e04444", name='test port 2')
-        child_ports = {child_port_1,child_port_2}
+        child_ports = {child_port_1, child_port_2}
 
         # Create IP Address List
         success = self.driver.ex_create_port_list(
@@ -2016,14 +2016,14 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             id="333174a2-ae74-4658-9e56-50fc90e086cf", name='test port 1')
         child_port_2 = DimensionDataChildPortList(
             id="311174a2-ae74-4658-9e56-50fc90e04444", name='test port 2')
-        child_ports_ids = {child_port_1.id,child_port_2.id}
+        child_ports_ids = {child_port_1.id, child_port_2.id}
 
         # Create IP Address List
         success = self.driver.ex_create_port_list(
             ex_network_domain=net_domain.id, name=name,
             description=description,
             port_collection=port_collection,
-            child_port_list_lists = child_ports_ids
+            child_port_list_lists=child_ports_ids
         )
 
         self.assertTrue(success)
@@ -2094,6 +2094,7 @@ class DimensionDataTests(unittest.TestCase, TestCaseMixin):
             ex_port_list=port_list.id)
         self.assertTrue(success)
 
+
 class InvalidRequestError(Exception):
     def __init__(self, tag):
         super(InvalidRequestError, self).__init__("Invalid Request - %s" % tag)
@@ -2112,7 +2113,7 @@ class DimensionDataMockRawResponse(MockRawResponse):
         return (httplib.BAD_REQUEST, body, {}, httplib.responses[httplib.OK])
 
     def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_report_usageDetailed(
-        self, method, url, body, headers):
+            self, method, url, body, headers):
         body = self.fixtures.load(
             'detailed_usage_report.csv'
         )
@@ -2123,8 +2124,8 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
     fixtures = ComputeFileFixtures('dimensiondata')
 
     def _oec_0_9_myaccount_UNAUTHORIZED(self, method, url, body, headers):
-        return (
-        httplib.UNAUTHORIZED, "", {}, httplib.responses[httplib.UNAUTHORIZED])
+        return (httplib.UNAUTHORIZED, "", {},
+                httplib.responses[httplib.UNAUTHORIZED])
 
     def _oec_0_9_myaccount(self, method, url, body, headers):
         body = self.fixtures.load('oec_0_9_myaccount.xml')
@@ -2160,7 +2161,7 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_server_pendingDeploy(
-        self, method, url, body, headers):
+            self, method, url, body, headers):
         body = self.fixtures.load(
             'oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_server_pendingDeploy.xml')
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
@@ -2197,7 +2198,7 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_server_11_INPROGRESS(
-        self, method, url, body, headers):
+            self, method, url, body, headers):
         body = None
         action = url.split('?')[-1]
 
@@ -2225,11 +2226,8 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
             '_oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_server.xml')
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
-    def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_networkWithLocation(self,
-                                                                          method,
-                                                                          url,
-                                                                          body,
-                                                                          headers):
+    def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_networkWithLocation(
+        self, method, url, body, headers):
         if method is "POST":
             request = ET.fromstring(body)
             if request.tag != "{http://oec.api.opsource.net/schemas/network}NewNetworkWithLocation":
@@ -2241,7 +2239,8 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
     def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_networkWithLocation_NA9(
         self, method, url, body, headers):
         body = self.fixtures.load(
-            'oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_networkWithLocation.xml')
+            'oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_networkWithLocation.xml'
+        )
         return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
     def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_network_4bba37be_506f_11e3_b29c_001517c4643e(
@@ -2282,11 +2281,9 @@ class DimensionDataMockHttp(StorageMockHttp, MockHttp):
                 'oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_server_e75ead52_692f_4314_8725_c8a4f4d13a87_POST.xml')
             return (httplib.OK, body, {}, httplib.responses[httplib.OK])
 
-    def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_antiAffinityRule(self,
-                                                                       method,
-                                                                       url,
-                                                                       body,
-                                                                       headers):
+    def _oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_antiAffinityRule(
+        self, method, url, body, headers):
+
         body = self.fixtures.load(
             'oec_0_9_8a8f6abc_2745_4d8a_9cbc_8dabe5a7d0e4_antiAffinityRule_create.xml'
         )

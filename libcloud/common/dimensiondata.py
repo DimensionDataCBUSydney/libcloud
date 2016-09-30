@@ -489,8 +489,8 @@ class DimensionDataConnection(ConnectionUserAndKey):
                 int(paged_resp.get('pageSize')):
             params['pageNumber'] = int(paged_resp.get('pageNumber')) + 1
             paged_resp = self.request_with_orgId_api_2(action, params,
-                                                           data, headers,
-                                                           method).object
+                                                       data, headers,
+                                                       method).object
             yield paged_resp
 
     def get_resource_path_api_1(self):
